@@ -10,8 +10,8 @@ class Settings(BaseSettings):
     # VAPI Configuration
     vapi_api_key: str = os.getenv("VAPI_API_KEY", "")
     vapi_assistant_id: str = os.getenv("VAPI_ASSISTANT_ID", "")
-    vapi_sample_rate: int = int(os.getenv("VAPI_SAMPLE_RATE", "8000"))
-    vapi_message_buffer_size: int = int(os.getenv("VAPI_MESSAGE_BUFFER_SIZE", "25"))
+    vapi_sample_rate: int = int(os.getenv("VAPI_SAMPLE_RATE", "16000"))
+    vapi_message_buffer_size: int = int(os.getenv("VAPI_MESSAGE_BUFFER_SIZE", "50"))
     
     # Server Configuration - dynamically get ngrok URL
     @property

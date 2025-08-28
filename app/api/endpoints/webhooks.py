@@ -1,14 +1,13 @@
 import logging
-from typing import Annotated
 
-from fastapi import APIRouter, Body, status
+from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.post("/receiver", status_code=status.HTTP_200_OK, include_in_schema=False)
-async def webhook_receiver(data: Annotated[dict, Body()]):
+async def webhook_receiver(data: dict):
     """
     Log webhook payload from Teler.
     """

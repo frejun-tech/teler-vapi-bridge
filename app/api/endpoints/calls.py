@@ -1,15 +1,12 @@
-import base64
-import json
 import logging
-from typing import Annotated
 
-import httpx
-from fastapi import APIRouter, Body, HTTPException, WebSocket, status
+from fastapi import APIRouter, HTTPException, WebSocket, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from app.core.config import settings
-from app.utils.stream_handlers import call_stream_handler, remote_stream_handler
+from app.utils.stream_handlers import (call_stream_handler,
+                                       remote_stream_handler)
 from app.utils.teler_client import TelerClient
 from app.utils.vapi_client import VapiClient
 
@@ -19,6 +16,10 @@ router = APIRouter()
 class CallFlowRequest(BaseModel):
     call_id: str
     account_id: str
+    from_number: str
+    to_number: str
+
+class CallRequest(BaseModel):
     from_number: str
     to_number: str
 
@@ -38,16 +39,16 @@ async def stream_flow(payload: CallFlowRequest):
 
     return JSONResponse(stream_flow)
 
-@router.get("/initiate-call", status_code=status.HTTP_200_OK)
-async def initiate_call():
+@router.post("/initiate-call", status_code=status.HTTP_200_OK)
+async def initiate_call(call_request: CallRequest):
     """
     Initiate a call using Teler SDK.
     """
     try:
         teler_client = TelerClient(api_key=settings.teler_api_key)
         call = await teler_client.create_call(
-            from_number=settings.from_number,
-            to_number=settings.to_number,
+            from_number=call_request.from_number,
+            to_number=call_request.to_number,
             flow_url=f"https://{settings.server_domain}/api/v1/calls/flow",
             status_callback_url=f"https://{settings.server_domain}/api/v1/webhooks/receiver",
             record=True,

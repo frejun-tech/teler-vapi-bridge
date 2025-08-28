@@ -4,7 +4,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.router import router
-from app.core.config import settings
 
 # Configure logging
 logging.basicConfig(
@@ -34,6 +33,7 @@ app.include_router(router, prefix="/api/v1")
 @app.get("/")
 async def root():
     """Health check endpoint"""
+    from app.core.config import settings
     return {
         "message": "Teler VAPI Bridge is running", 
         "status": "healthy",
@@ -48,6 +48,7 @@ async def health_check():
 @app.get("/ngrok-status")
 async def ngrok_status():
     """Get current ngrok status and URL"""
+    from app.core.config import settings
     from app.utils.ngrok_utils import get_current_ngrok_url
     current_url = get_current_ngrok_url()
     return {
