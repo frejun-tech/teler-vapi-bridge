@@ -27,13 +27,15 @@ async def stream_flow(payload: CallFlowRequest):
     """
     Build and return Stream flow.
     """
-    from teler import CallFlow
-    
-    stream_flow = CallFlow.stream(
-        ws_url=f"wss://{settings.server_domain}/api/v1/calls/media-stream",
-        chunk_size=500,
-        record=True
-    )
+
+    stream_flow = {
+        "action": "stream",
+        "ws_url": f"wss://{settings.server_domain}/api/v1/calls/media-stream",
+        "chunk_size": 500,
+        "sample_rate": "16k",
+        "record": True
+    }
+
     return JSONResponse(stream_flow)
 
 @router.get("/initiate-call", status_code=status.HTTP_200_OK)

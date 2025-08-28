@@ -1,4 +1,4 @@
-import requests
+import httpx
 import logging
 from typing import Optional
 
@@ -10,20 +10,21 @@ def get_current_ngrok_url() -> Optional[str]:
     """
     try:
         # ngrok exposes its API on the ngrok service (port 4040) when running in Docker
-        response = requests.get("http://ngrok:4040/api/tunnels", timeout=5)
-        if response.status_code == 200:
-            tunnels = response.json().get("tunnels", [])
-            for tunnel in tunnels:
-                if tunnel.get("proto") == "https":
-                    public_url = tunnel.get("public_url")
-                    if public_url:
-                        # Extract just the domain part (remove https://)
-                        domain = public_url.replace("https://", "")
-                        logger.info(f"Detected ngrok URL: {public_url}")
-                        return domain
-        else:
-            logger.warning(f"Failed to fetch ngrok tunnels: {response.status_code}")
-    except requests.exceptions.RequestException as e:
+        with httpx.Client(timeout=5.0) as client:
+            response = client.get("http://ngrok:4040/api/tunnels")
+            if response.status_code == 200:
+                tunnels = response.json().get("tunnels", [])
+                for tunnel in tunnels:
+                    if tunnel.get("proto") == "https":
+                        public_url = tunnel.get("public_url")
+                        if public_url:
+                            # Extract just the domain part (remove https://)
+                            domain = public_url.replace("https://", "")
+                            logger.info(f"Detected ngrok URL: {public_url}")
+                            return domain
+            else:
+                logger.warning(f"Failed to fetch ngrok tunnels: {response.status_code}")
+    except httpx.RequestError as e:
         logger.warning(f"Could not connect to ngrok API: {e}")
     except Exception as e:
         logger.error(f"Error fetching ngrok URL: {e}")
