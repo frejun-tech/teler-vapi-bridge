@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file: ".env"
+    volumes:
+      - ./app:/app/app
+    restart: unless-stopped
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    ports:
+      - "4040:4040"
+    env_file: ".env"
+    command: http app:8000
+    restart: unless-stopped
+    depends_on:
+      - app
+
+networks:
+  default:
+    name: teler-vapi-bridge
