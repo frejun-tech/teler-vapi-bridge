@@ -5,6 +5,7 @@ A reference integration between Teler and VAPI, based on Media Streaming over We
 ## Setup
 
 1. **Clone and configure:**
+
    ```bash
    git clone https://github.com/frejun-tech/teler-vapi-bridge.git
    cd teler-vapi-bridge
@@ -19,15 +20,14 @@ A reference integration between Teler and VAPI, based on Media Streaming over We
 
 ## Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `VAPI_API_KEY` | Your VAPI API key | Required |
-| `VAPI_ASSISTANT_ID` | Your VAPI assistant ID | Required |
-| `VAPI_SAMPLE_RATE` | Audio sample rate | 16000 |
-| `VAPI_MESSAGE_BUFFER_SIZE` | Messages to buffer before relay | 50 |
-| `SERVER_DOMAIN` | Your ngrok domain (auto-detected) | Required |
-| `TELER_API_KEY` | Your Teler API key | Required |
-| `NGROK_AUTHTOKEN` | Your ngrok auth token | Required |
+| Variable                   | Description                     | Default  |
+| -------------------------- | ------------------------------- | -------- |
+| `VAPI_API_KEY`             | Your VAPI API key               | Required |
+| `VAPI_ASSISTANT_ID`        | Your VAPI assistant ID          | Required |
+| `VAPI_SAMPLE_RATE`         | Audio sample rate               | 16000    |
+| `VAPI_MESSAGE_BUFFER_SIZE` | Messages to buffer before relay | 50       |
+| `TELER_API_KEY`            | Your Teler API key              | Required |
+| `NGROK_AUTHTOKEN`          | Your ngrok auth token           | Required |
 
 ## API Endpoints
 
@@ -52,7 +52,9 @@ curl -X POST "http://localhost:8000/api/v1/calls/initiate-call" \
 
 ## Features
 
+- **Bi-directional media streaming** - Bridges audio between Teler and VAPI (Voice API) over WebSockets.
+- **Real-time audio handling** - Receives live audio chunks from Teler, processes them, and forwards to VAPI; streams responses back to Teler.
+- **Dockerized setup** - Comes with Dockerfile and docker-compose.yml for easy local development and deployment.
 - **Dynamic ngrok URL detection** - Automatically detects current ngrok domain
 - **Audio buffering** - Buffers VAPI messages before relaying to Teler
 - **Sample rate conversion** - Converts VAPI 16kHz audio to Teler 8kHz
-- **Real-time streaming** - WebSocket-based audio streaming between systems
