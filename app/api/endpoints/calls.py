@@ -1,6 +1,6 @@
 import logging
 
-from fastapi import APIRouter, HTTPException, WebSocket, status
+from fastapi import APIRouter, HTTPException, WebSocket, status, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
@@ -9,6 +9,7 @@ from app.utils.stream_handlers import (call_stream_handler,
                                        remote_stream_handler)
 from app.utils.teler_client import TelerClient
 from app.utils.vapi_client import VapiClient
+from app.utils.handling_secrets import verify_teler_signature
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -24,10 +25,19 @@ class CallRequest(BaseModel):
     to_number: str
 
 @router.post("/flow", status_code=status.HTTP_200_OK, include_in_schema=False)
-async def stream_flow(payload: CallFlowRequest):
+async def stream_flow(request: Request, payload: CallFlowRequest):
     """
     Build and return Stream flow.
     """
+    raw_body = await request.body()
+    is_valid = verify_teler_signature(request, raw_body)
+
+    if not is_valid:
+        logger.error("Invalid webhook signature")
+        logger.error("RAW BODY: %r", raw_body)
+        raise HTTPException(status_code=401, detail="Invalid signature")
+
+    logger.info("Webhook signature verified")
 
     stream_flow = {
         "action": "stream",
@@ -54,7 +64,7 @@ async def initiate_call(call_request: CallRequest):
             record=True,
         )
         logger.info(f"Call created: {call}")
-        return JSONResponse(content={"success": True, "call": call})
+        return JSONResponse(content={"success": True, "call_id": call.id})
     except Exception as e:
         logger.error(f"Failed to create call: {e}")
         raise HTTPException(

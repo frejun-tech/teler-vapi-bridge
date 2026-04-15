@@ -28,6 +28,10 @@ class Settings(BaseSettings):
     
     # Logging
     log_level: str = os.getenv("LOG_LEVEL", "INFO")
+
+    # Secret
+    SECRET: str = os.getenv("SECRET", "")
+
     
     class Config:
         env_file = ".env"

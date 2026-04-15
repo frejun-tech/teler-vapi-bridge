@@ -108,7 +108,7 @@ def remote_stream_handler():
                     logger.debug(f"Buffered message, buffer size: {len(message_buffer)}/{settings.vapi_message_buffer_size}")
                     return ({}, StreamOp.PASS)
             else:
-                logger.info(f"VAPI Control: {message}")
+                logger.debug(f"VAPI Control: {message}")
                 return ({}, StreamOp.PASS)
         except Exception as e:
             logger.error(f"Error in remote stream handler: {e}")
