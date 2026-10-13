@@ -3,6 +3,6 @@ uvicorn[standard]==0.24.0
 pydantic==2.5.0
 pydantic-settings==2.1.0
 httpx==0.25.2
-teler==0.2.0
+teler==1.0.0
 numpy==1.24.3
 scipy==1.11.1
